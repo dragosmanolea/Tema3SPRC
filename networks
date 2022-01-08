@@ -1,0 +1,14 @@
+broker mqtt -> adaptor
+db -> adaptor si grafana
+adaptor -> broker mqtt si db
+grafana -> db
+
+adaptor = server (se aboneaza si introduce in db)
+
+comunicatia container container se face prin intermediul retelor
+Vor exista 3 retele:
+1) broket mqtt - server
+2) server - db
+3) db - grafana
+
+https://miro.com/app/board/uXjVOYVNOh4=/

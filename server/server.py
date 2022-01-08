@@ -1,14 +1,30 @@
 import paho.mqtt.client as mqtt
 from typing import NewType
 from time import sleep
+from re import match
+from datetime import date, datetime
+import json
 
 brokerMQTT = "localhost"
 
 def on_message(client, user_data, msg):
+    if not match(r'^[^/]+/[^/]+$', msg.topic):
+        return
     topic = msg.topic
-    decodeMessage = str(msg.payload.decode("utf-8"))
-    print("Topic: " + topic)
-    print("Message: " + decodeMessage)
+
+    topic_splitted = topic.split("/")
+    location = topic_splitted[0]
+    station = topic_splitted[1]
+
+    timestamp = datetime.now()
+
+    decodeMessage = msg.payload.decode("utf-8")
+    current_payload = json.loads(decodeMessage)
+    
+    for it in current_payload:
+        key = it
+        value = current_payload.get(key, None)
+        
 
 def main():
     mqtt_cl = mqtt.Client(userdata="zoinx")
