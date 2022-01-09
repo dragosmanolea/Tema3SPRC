@@ -17,6 +17,8 @@ services:
     networks:
       - db_server_network
       - db_grafana_network
+    volumes:
+      - influxdb:/var/lib/influxdb
 
   server:
     build: .
@@ -31,7 +33,7 @@ services:
       - db_server_network
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:7.2.1
     container_name: grafana
     depends_on:
       - db
@@ -42,6 +44,9 @@ services:
       - 3000:3000
     networks:
       - db_grafana_network
+    volumes:
+      - grafana:/var/lib/grafana
+
 
 networks:
   broker_server_network:
@@ -50,3 +55,6 @@ networks:
     name: db_server_network
   db_grafana_network:
     name: db_grafana_network
+volumes:
+  influxdb:
+  grafana:

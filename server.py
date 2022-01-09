@@ -54,10 +54,6 @@ def on_message(client, user_data, msg):
 
 def main():
     client_db = InfluxDBClient(host='influxdb', port=8086)
-    databases = client_db.get_list_database()
-    # check if db exists
-    if len(list(filter(lambda x: x['name'] == "iot_db", databases))) == 0:
-        client_db.create_database("iot_db")
     client_db.switch_database("iot_db")
 
     mqtt_cl = mqtt.Client(userdata=client_db)
