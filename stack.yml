@@ -33,7 +33,7 @@ services:
       - db_server_network
 
   grafana:
-    image: grafana/grafana:7.2.1
+    image: grafana/grafana:latest
     container_name: grafana
     depends_on:
       - db
@@ -46,7 +46,6 @@ services:
       - db_grafana_network
     volumes:
       - grafana:/var/lib/grafana
-
 
 networks:
   broker_server_network:

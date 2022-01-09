@@ -37,13 +37,6 @@ def on_message(client, user_data, msg):
         data = []
         if isinstance(value, int) or isinstance(value, float):
             # valid input
-            # data.append({
-            #     "field_measured": key,
-            #     "location": location,
-            #     "station": station,
-            #     "value": value,
-            #     "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S%z")
-            # })
             data.append({
                 "measurement": f"{station}.{key}",
                 "tags": {
@@ -61,10 +54,14 @@ def on_message(client, user_data, msg):
 
             if data:
                 # print(f"ar trebui sa adaug in DB: {data}")
-                print(user_data.write_points(data))
+                user_data.write_points(data)
 
 def main():
     client_db = InfluxDBClient(host='influxdb', port=8086)
+    databases = client_db.get_list_database()
+    # check if db exists
+    if len(list(filter(lambda x: x['name'] == "iot_db", databases))) == 0:
+        client_db.create_database("iot_db")
     client_db.switch_database("iot_db")
 
     mqtt_cl = mqtt.Client(userdata=client_db)
