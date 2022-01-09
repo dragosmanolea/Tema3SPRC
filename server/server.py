@@ -5,6 +5,7 @@ from re import match
 from datetime import date, datetime
 import json
 import logging
+from influxdb import InfluxDBClient
 
 brokerMQTT = "localhost"
 
@@ -26,7 +27,7 @@ def on_message(client, user_data, msg):
         key = it
         value = current_payload.get(key, None)
         if key == "timestamp":
-            timestamp = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S%z")
+            timestamp = datetime.strptime(value, "%Y-%m-%d %H:%M:%S%z")
             logging.info(f"Data timestamp is: {timestamp}")
             print(f"Data timestamp is: {timestamp}")
         else:
@@ -41,14 +42,20 @@ def on_message(client, user_data, msg):
                 "location": location,
                 "station": station,
                 "value": value,
-                "timestamp": timestamp.strftime("%Y-%m-%dT%H:%M:%S%z")
+                "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S%z")
             })
 
             logging.info(f"{location}.{station}.{key} {value}")
             print(f"{location}.{station}.{key} {value}")
 
+            if data:
+                print(f"ar trebui sa adaug in DB: {data}")
+
 def main():
-    mqtt_cl = mqtt.Client(userdata="zoinx")
+    client_db = InfluxDBClient(host='localhost', port=8086)
+    client_db.switch_database("iot_db")
+
+    mqtt_cl = mqtt.Client(userdata=client_db)
     mqtt_cl.on_message = on_message
 
     mqtt_cl.connect(brokerMQTT)
