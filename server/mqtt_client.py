@@ -8,43 +8,32 @@ import paho.mqtt.client as mqtt
 
 
 def _create_connection():
-    client = mqtt.Client("ha ha")
+    client = mqtt.Client("dragos e34")
     client.connect("localhost")
     client.loop_start()
 
     return client
 
 
-def _close_connection(client):
-    client.disconnect()
-    client.loop_stop()
+client = _create_connection()
 
+batts = list(range(50, 150))
+temps = list(range(10, 300))
+humids = list(range(5, 95))
+secs = list(arange(1, 1.5, 2))
+stations = ['A', 'B', 'C']
 
-def main():
-    client = _create_connection()
+while True:
+    iot_data = {
+        'BAT': choice(batts),
+        'TEMP': choice(temps),
+        'HUMID': choice(humids),
+    }
 
-    batts = list(range(90, 101))
-    temps = list(range(20, 31))
-    humids = list(range(30, 41))
-    secs = list(arange(0.5, 1.6, 0.1))
-    stations = ['A', 'B', 'C']
+    station = choice(stations)
+    print(station)
 
-    while True:
-        iot_data = {
-            'BAT': choice(batts),
-            'TEMP': choice(temps),
-            'HUMID': choice(humids),
-        }
-
-        station = choice(stations)
-        print(station)
-        client.publish('UPB/' + station, dumps(iot_data))
-        print(f'Station {station} published:\n{dumps(iot_data, indent=4)}\n')
-
-        sleep(choice(secs))
-
-    _close_connection(client)
-
-
-if __name__ == "__main__":
-    main()
+    client.publish('UPB/' + station, dumps(iot_data))
+    
+    print(f'Station {station} published:\n{dumps(iot_data, indent=4)}\n')
+    sleep(choice(secs))
