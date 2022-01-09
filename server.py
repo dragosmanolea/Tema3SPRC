@@ -37,11 +37,22 @@ def on_message(client, user_data, msg):
         data = []
         if isinstance(value, int) or isinstance(value, float):
             # valid input
+            # data.append({
+            #     "field_measured": key,
+            #     "location": location,
+            #     "station": station,
+            #     "value": value,
+            #     "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S%z")
+            # })
             data.append({
-                "field_measured": key,
-                "location": location,
-                "station": station,
-                "value": value,
+                "measurement": f"{station}.{key}",
+                "tags": {
+                    "location": location,
+                    "station": station
+                },
+                "fields": {
+                    "value": value
+                },
                 "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S%z")
             })
 
