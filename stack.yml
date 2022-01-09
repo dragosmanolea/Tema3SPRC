@@ -1,0 +1,52 @@
+version: '2.8'
+
+services:
+  mqtt_broker:
+    image: eclipse-mosquitto:1.5
+    container_name: mosquitto_mqtt_broker
+    ports:
+      - 1883:1883
+    networks:
+      - broker_server_network
+
+  db:
+    image: influxdb:1.8
+    container_name: influxdb
+    ports:
+      - 8086:8086
+    networks:
+      - db_server_network
+      - db_grafana_network
+
+  server:
+    build: .
+    container_name: server
+    environment:
+      - DEBUG_DATA_FLOW=true
+    depends_on:
+      - mqtt_broker
+      - db
+    networks:
+      - broker_server_network
+      - db_server_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - db
+    environment:
+      - GF_SECURITY_ADMIN_USER=asistent
+      - GF_SECURITY_ADMIN_PASSWORD=grafanaSPRC2021
+    ports:
+      - 3000:3000
+    networks:
+      - db_grafana_network
+
+networks:
+  broker_server_network:
+    name: broker_server_network
+  db_server_network:
+    name: db_server_network
+  db_grafana_network:
+    name: db_grafana_network
